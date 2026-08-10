@@ -6,6 +6,7 @@
 	import com.erp.repository.QuotationRepository;
 	import com.erp.repository.VendorRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -24,6 +25,11 @@ import java.time.LocalDate;
 
 	    private final VendorRepository vendorRepository;
 
+	    
+	    public List<Quotation> getAllQuotations() {
+	        return quotationRepository.findAll();
+	    }
+	    
 	    // 1. Officer manually logs a received quotation into the ERP
 	    public Quotation createQuotation(Long prId, Long vendorId, Quotation quotation) {
 	        PurchaseRequisition pr = prRepository.findById(prId)
@@ -67,5 +73,34 @@ import java.time.LocalDate;
 	    public void deleteQuotation(Long quotationId) {
 	        Quotation quotation = getQuotationById(quotationId);
 	        quotationRepository.delete(quotation);
+	    }
+	    
+	  
+	    @Transactional
+	    public Quotation updateQuotation(Long quotationId, Long prId, Long vendorId, Quotation quotationDetails) {
+	        // 1. Fetch existing quotation
+	        Quotation existingQuotation = quotationRepository.findById(quotationId)
+	                .orElseThrow(() -> new RuntimeException("Quotation not found with id: " + quotationId));
+
+	        // 2. Fetch Purchase Requisition
+	        PurchaseRequisition pr = prRepository.findById(prId)
+	                .orElseThrow(() -> new RuntimeException("Purchase Requisition not found with id: " + prId));
+
+	        // 3. Fetch Vendor
+	        Vendor vendor = vendorRepository.findById(vendorId)
+	                .orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));
+
+	        // 4. Update fields
+	        existingQuotation.setPurchaseRequisition(pr);
+	        existingQuotation.setVendor(vendor);
+	        existingQuotation.setAmount(quotationDetails.getAmount());
+	        existingQuotation.setQuoteDate(quotationDetails.getQuoteDate());
+	        
+	        if (quotationDetails.getStatus() != null) {
+	            existingQuotation.setStatus(quotationDetails.getStatus());
+	        }
+
+	        // 5. Save and return updated entity
+	        return quotationRepository.save(existingQuotation);
 	    }
 	}

@@ -1,8 +1,10 @@
 package com.erp.entities;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "invoices")
@@ -26,8 +28,12 @@ public class Invoice {
     @Column(name = "invoice_date", nullable = false)
     private LocalDate invoiceDate;
 
+    @Column(nullable = false)
+    private String status = "Pending"; // Added status field with default value
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "po_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private PurchaseOrder purchaseOrder;
 
 }

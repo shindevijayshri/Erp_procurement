@@ -83,12 +83,21 @@
 			<version>3.2.6</version>
 		</dependency>
 		
+			<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-mail</artifactId>
+	</dependency>
+
 		<!-- Spring Security -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
+		<dependency>
+		    <groupId>com.razorpay</groupId>
+		    <artifactId>razorpay-java</artifactId>
+		    <version>1.4.3</version>
+		</dependency>
 		<!-- JJWT Dependencies for JWT Creation & Parsing -->
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>

@@ -68,4 +68,11 @@ import java.util.List;
 	        poService.deletePO(poId);
 	        return ResponseEntity.ok("Purchase Order deleted successfully.");
 	    }
+	 // 8. Update PO and its items -> PUT /api/orders/{id}
+	    @PutMapping("/{id}")
+	    public ResponseEntity<PurchaseOrder> updatePO(@PathVariable("id") Long poId,
+	                                                  @RequestBody PurchaseOrder po) {
+	        PurchaseOrder updatedPO = poService.updatePO(poId, po);
+	        return ResponseEntity.ok(updatedPO);
+	    }
 	}

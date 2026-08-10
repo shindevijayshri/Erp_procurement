@@ -49,4 +49,21 @@ import java.util.List;
 	        invoiceService.deleteInvoice(invoiceId);
 	        return ResponseEntity.ok("Invoice deleted successfully.");
 	    }
+	    
+	    
+	    @PutMapping("/{id}")
+	    public ResponseEntity<Invoice> updateInvoice(
+	            @PathVariable Long id,
+	            @RequestParam(required = false) Long poId,
+	            @RequestBody Invoice invoiceDetails) {
+	        
+	        Invoice updatedInvoice = invoiceService.updateInvoice(id, poId, invoiceDetails);
+	        return ResponseEntity.ok(updatedInvoice);
+	    }
+	    
+	    @PutMapping("/{id}/status")
+	    public ResponseEntity<Invoice> updateInvoiceStatus(@PathVariable Long id, @RequestParam String status) {
+	        Invoice updatedInvoice = invoiceService.updateInvoiceStatus(id, status);
+	        return ResponseEntity.ok(updatedInvoice);
+	    }
 	}

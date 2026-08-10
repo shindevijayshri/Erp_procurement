@@ -3,6 +3,7 @@ package com.erp.controller;
 import com.erp.dto.LoginRequest;
 import com.erp.dto.JwtResponse;
 import com.erp.entities.User;
+import com.erp.entities.UserStatus;
 import com.erp.repository.UserRepository;
 import com.erp.security.JwtUtils;
 
@@ -41,7 +42,16 @@ public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest
             .orElseThrow(() -> new UsernameNotFoundException(
                     "User not found: " + loginRequest.getEmail()));
 
+    if (user.getStatus() == UserStatus.PENDING) {
+        return ResponseEntity.status(403)
+                .body("Your account is pending admin approval. Please try again later.");
+    }
 
+    if (user.getStatus() == UserStatus.REJECTED) {
+        return ResponseEntity.status(403)
+                .body("Your registration request has been rejected. Please contact the administrator.");
+    }
+    
     Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),

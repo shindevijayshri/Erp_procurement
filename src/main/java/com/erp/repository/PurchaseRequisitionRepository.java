@@ -16,4 +16,7 @@
 	    List<PurchaseRequisition> findByUser_UserId(Long userId);
 
 	    List<PurchaseRequisition> findByStatus(String status);
+	    
+	    Optional<PurchaseRequisition> findTopByOrderByPrIdDesc();
+	    
 	}

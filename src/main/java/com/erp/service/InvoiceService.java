@@ -55,4 +55,31 @@ import java.time.LocalDate;
 	        Invoice invoice = getInvoiceById(invoiceId);
 	        invoiceRepository.delete(invoice);
 	    }
+	  
+	    public Invoice updateInvoice(Long id, Long poId, Invoice invoiceDetails) {
+	        Invoice existingInvoice = invoiceRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + id));
+
+	        // Update basic fields
+	        existingInvoice.setInvoiceNo(invoiceDetails.getInvoiceNo());
+	        existingInvoice.setInvoiceDate(invoiceDetails.getInvoiceDate());
+	        existingInvoice.setAmount(invoiceDetails.getAmount());
+
+	        // Update Purchase Order relationship if a new poId is provided
+	        if (poId != null) {
+	            PurchaseOrder newPurchaseOrder = poRepository.findById(poId)
+	                .orElseThrow(() -> new RuntimeException("Purchase Order not found with id: " + poId));
+	            existingInvoice.setPurchaseOrder(newPurchaseOrder);
+	        }
+
+	        return invoiceRepository.save(existingInvoice);
+	    }
+	    
+	    public Invoice updateInvoiceStatus(Long id, String status) {
+	        Invoice invoice = invoiceRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Invoice not found with ID: " + id));
+	        invoice.setStatus(status);
+	        return invoiceRepository.save(invoice);
+	    }
+	    
 	}

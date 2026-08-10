@@ -18,6 +18,13 @@ import org.springframework.http.HttpStatus;
 	public class QuotationController {
 
 	    private final QuotationService quotationService;
+	    
+	    @GetMapping
+	    public ResponseEntity<List<Quotation>> getAllQuotations() {
+	        // Ensure you have a getAllQuotations() method in your QuotationService
+	        List<Quotation> quotations = quotationService.getAllQuotations(); 
+	        return ResponseEntity.ok(quotations);
+	    }
 
 	    // 1. Log vendor quotation -> POST /api/quotations?prId=1&vendorId=2
 	    @PostMapping
@@ -48,5 +55,14 @@ import org.springframework.http.HttpStatus;
 	    public ResponseEntity<String> deleteQuotation(@PathVariable("id") Long quotationId) {
 	        quotationService.deleteQuotation(quotationId);
 	        return ResponseEntity.ok("Quotation deleted successfully.");
+	    }
+	    
+	    @PutMapping("/{id}")
+	    public ResponseEntity<Quotation> updateQuotation(@PathVariable("id") Long quotationId,
+	                                                     @RequestParam Long prId,
+	                                                     @RequestParam Long vendorId,
+	                                                     @RequestBody Quotation quotation) {
+	        Quotation updatedQuotation = quotationService.updateQuotation(quotationId, prId, vendorId, quotation);
+	        return ResponseEntity.ok(updatedQuotation);
 	    }
 	}

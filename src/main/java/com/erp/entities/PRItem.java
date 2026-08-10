@@ -27,7 +27,8 @@ public class PRItem {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "prItems"})
     private PurchaseRequisition purchaseRequisition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Changed to EAGER so item details (name, etc.) are always serialized to JSON
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Item item;

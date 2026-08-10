@@ -1,7 +1,8 @@
 	package com.erp.service;
 	
 	import com.erp.entities.User;
-	import com.erp.repository.UserRepository;
+import com.erp.entities.UserStatus;
+import com.erp.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,16 +24,23 @@ import org.springframework.stereotype.Service;
 	    
 	    // Create New User
 	    public User createUser(User user) {
+
 	        if (userRepository.existsByEmail(user.getEmail())) {
 	            throw new RuntimeException("User with email " + user.getEmail() + " already exists.");
 	        }
+
+	        // Encrypt password
 	        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+	        // Every newly registered user requires admin approval
+	        user.setStatus(UserStatus.PENDING);
+
 	        return userRepository.save(user);
 	    }
 
 	    // List All Users
 	    public List<User> getAllUsers() {
-	        return userRepository.findAll();
+	        return userRepository.findByStatus(UserStatus.APPROVED);
 	    }
 
 	    // Get User by ID
@@ -69,4 +77,26 @@ import org.springframework.stereotype.Service;
 	        userRepository.delete(existingUser);
 	    }
 	
+	    
+	    public List<User> getPendingUsers() {
+	        return userRepository.findByStatus(UserStatus.PENDING);
+	    }
+	    
+	    public User approveUser(Long userId) {
+
+	        User user = getUserById(userId);
+
+	        user.setStatus(UserStatus.APPROVED);
+
+	        return userRepository.save(user);
+	    }
+	    
+	    public User rejectUser(Long userId) {
+
+	        User user = getUserById(userId);
+
+	        user.setStatus(UserStatus.REJECTED);
+
+	        return userRepository.save(user);
+	    }
 }

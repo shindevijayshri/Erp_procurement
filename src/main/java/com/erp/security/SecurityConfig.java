@@ -67,33 +67,72 @@ public class SecurityConfig {
             // 3. Register Custom DaoAuthenticationProvider
             .authenticationProvider(authenticationProvider())
             
-            // 4. Define Endpoint Access Rules based on Roles
+         // 4. Define Endpoint Access Rules based on Roles
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
 
-                // Public Endpoints (Login & Swagger Docs)
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                
-                // ADMIN Only Rules
-                .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
-                
+
+             // Public Registration
+             .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+
+             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+             // Admin-only User Management
+             .requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority("ROLE_ADMIN")
+             .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority("ROLE_ADMIN")
+             .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("ROLE_ADMIN")
                 // PURCHASE OFFICER Rules
                 .requestMatchers("/api/vendors/**").hasAuthority("ROLE_PURCHASE_OFFICER")
-                .requestMatchers("/api/orders/**").hasAuthority("ROLE_PURCHASE_OFFICER")
                 .requestMatchers("/api/quotations/**").hasAuthority("ROLE_PURCHASE_OFFICER")
-                .requestMatchers(HttpMethod.PATCH, "/api/requisitions/*/status").hasAuthority("ROLE_PURCHASE_OFFICER")
+                
+                // ORDERS: Allowed for Purchase Officer & Finance Officer (Excluded Admin)
+                .requestMatchers("/api/orders/**").hasAnyAuthority("ROLE_PURCHASE_OFFICER", "ROLE_FINANCE_OFFICER")
+                
+                // REQUISITION Status Update Rule
+                .requestMatchers(HttpMethod.PUT, "/api/requisitions/*/status").hasAuthority("ROLE_PURCHASE_OFFICER")
                 
                 // FINANCE OFFICER Rules
-                .requestMatchers("/api/invoices/**").hasAnyAuthority("ROLE_FINANCE_OFFICER", "ROLE_PURCHASE_OFFICER")
+                .requestMatchers(HttpMethod.GET, "/api/invoices/**").permitAll()
                 .requestMatchers("/api/payments/**").hasAuthority("ROLE_FINANCE_OFFICER")
                 
                 // REQUISITION (PR) Rules
-                .requestMatchers("/api/requisitions/**").hasAnyAuthority("ROLE_USER", "ROLE_PURCHASE_OFFICER", "ROLE_ADMIN")
+                .requestMatchers("/api/requisitions/**").hasAnyAuthority("ROLE_USER", "ROLE_PURCHASE_OFFICER")
                 
                 // Lock down all remaining requests
                 .anyRequest().authenticated()
             );
+        
+            // 4. Define Endpoint Access Rules based on Roles
+//            .authorizeHttpRequests(auth -> auth
+//                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+//
+//                // Public Endpoints (Login & Swagger Docs)
+//                .requestMatchers("/api/auth/**").permitAll()
+//                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//                
+//                // ADMIN Only Rules
+//                .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
+//                
+//                // PURCHASE OFFICER Rules
+//                .requestMatchers("/api/vendors/**").hasAuthority("ROLE_PURCHASE_OFFICER")
+//                // PURCHASE OFFICER & FINANCE OFFICER Rules for Orders
+//                .requestMatchers("/api/orders/**").hasAnyAuthority("ROLE_PURCHASE_OFFICER", "ROLE_FINANCE_OFFICER")
+//                .requestMatchers("/api/quotations/**").hasAuthority("ROLE_PURCHASE_OFFICER")
+//                
+//                // FIXED: Changed HttpMethod.PATCH to HttpMethod.PUT to match @PutMapping in Controller
+//                .requestMatchers(HttpMethod.PUT, "/api/requisitions/*/status").hasAnyAuthority("ROLE_PURCHASE_OFFICER", "ROLE_ADMIN")
+//                
+//                // FINANCE OFFICER Rules
+//                .requestMatchers("/api/invoices/**").hasAnyAuthority("ROLE_FINANCE_OFFICER", "ROLE_PURCHASE_OFFICER")
+//                .requestMatchers("/api/payments/**").hasAuthority("ROLE_FINANCE_OFFICER")
+//                
+//                // REQUISITION (PR) Rules
+//                .requestMatchers("/api/requisitions/**").hasAnyAuthority("ROLE_USER", "ROLE_PURCHASE_OFFICER", "ROLE_ADMIN")
+//                
+//                // Lock down all remaining requests
+//                .anyRequest().authenticated()
+//            );
 
         // 5. Add JWT Filter before standard Spring Security Auth Filter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -101,7 +140,6 @@ public class SecurityConfig {
         // 6. Build and return the security chain
         return http.build();
     }
-
     // Helper Bean for CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

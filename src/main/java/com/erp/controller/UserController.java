@@ -53,4 +53,18 @@ import lombok.RequiredArgsConstructor;
 	        return ResponseEntity.ok("User with ID " + userId + " deleted successfully.");
 	    }
 	
+	    @GetMapping("/pending")
+	    public ResponseEntity<List<User>> getPendingUsers() {
+	        return ResponseEntity.ok(userService.getPendingUsers());
+	    }
+	    
+	    @PutMapping("/approve/{id}")
+	    public ResponseEntity<User> approveUser(@PathVariable Long id) {
+	        return ResponseEntity.ok(userService.approveUser(id));
+	    }
+	    
+	    @PutMapping("/reject/{id}")
+	    public ResponseEntity<User> rejectUser(@PathVariable Long id) {
+	        return ResponseEntity.ok(userService.rejectUser(id));
+	    }
 }

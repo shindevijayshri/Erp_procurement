@@ -1,0 +1,84 @@
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #6b52ed 0%, #7d32d4 100%);
+    color: white;
+    padding: 20px 0;
+    flex-shrink: 0;
+}
+
+.sidebar-brand {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.sidebar-item svg {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-navbar {
+    background: #ffffff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.metric-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef0f3;
+}
+
+.metric-card h6 {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.metric-card h3 {
+    color: #5b46e0;
+    font-weight: 700;
+    margin: 0;
+}
